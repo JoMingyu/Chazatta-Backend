@@ -45,8 +45,8 @@ router.route('/idea').post((req, res) => {
 }).get((req, res) => {
     // 아이디어 리스트 가져오기. (1) 플랫폼 필터링 (2) 좋아요순 정렬
     let platformToFilter = JSON.parse(req.query.platform);
-    let cut = parseInt(JSON.parse(req.query.cut));
-    let page = parseInt(JSON.parse(req.query.page));
+    let cut = parseInt(req.query.cut);
+    let page = parseInt(req.query.page);
     // ["", ""]
 
     let filteredIdeas = new Array();
@@ -61,7 +61,14 @@ router.route('/idea').post((req, res) => {
                 for (let j = 0; j < platformToFilter.length; j++) {
                     if (platformsOfIdea[i] == platformToFilter[j]) {
                         filteredIdeas[ideaCount++] = {
-                            title: idea.title
+                            title: idea.title,
+                            summary: idea.summary,
+                            platform: idea.platform,
+                            start_date: idea.develop_start_date,
+                            end_date: idea.develop_end_date,
+                            team_max_count: idea.team_max_count,
+                            team_current_count: idea.team_current_count,
+                            team_desire: idea.team_desire
                         };
                     }
                 }
