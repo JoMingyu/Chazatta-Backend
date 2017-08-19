@@ -101,6 +101,9 @@ router.route('/idea').post((req, res) => {
                 }
             }
         }
+        if(!res.headersSent) {
+            res.sendStatus(204);
+        }
     });
 }).delete((req, res) => {
     let idx = req.query.idx;
