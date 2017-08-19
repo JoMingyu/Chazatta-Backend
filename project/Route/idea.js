@@ -61,6 +61,7 @@ router.route('/idea').post((req, res) => {
                 for (let j = 0; j < platformToFilter.length; j++) {
                     if (platformsOfIdea[i] == platformToFilter[j]) {
                         filteredIdeas[ideaCount++] = {
+                            idx: idea.idx,
                             title: idea.title,
                             summary: idea.summary,
                             platform: idea.platform,
@@ -95,6 +96,7 @@ router.route('/idea').post((req, res) => {
 
 router.route('/idea/detail').get((req, res) => {
     // 아이디어 세부 정보
+    // 팀원 정보
     let idx = req.query.idx;
     mysql.query('SELECT * FROM idea WHERE idx=?', idx, (err, rows) => {
         res.status(200).send(JSON.stringify(rows));
@@ -112,6 +114,18 @@ router.route('/idea/comment').post((req, res) => {
 
 router.route('/idea/like').post((req, res) => {
     // 좋아요
+    let idx = req.body.idx;
+    mysql.query('SELECT * FROM idea WHERE idx=?', idx, (err, rows) => {
+
+        mysql.query('UPDATE idea SET like_count=? WHERE idx=?', [++rows[0].like_count, idx], (err, result) => {
+
+            res.status(200).send(JSON.stringify(rows[0].like_count));
+            res.end();
+        });
+    });
+
+}).delete((req, res) => {
+
 });
 
 module.exports = router;
