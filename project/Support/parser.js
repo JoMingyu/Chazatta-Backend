@@ -11,10 +11,11 @@ module.exports = {
 
         request.get(options, (error, response, body) => {
             if (!error && response.statusCode == 200) {
+                let obj = JSON.parse(body);
                 let bodys = {
-                    'name': response.name,
-                    'email': response.email,
-                    'sex': response.gender
+                    'name': obj.response.name,
+                    'email': obj.response.email,
+                    'sex': obj.response.gender
                 };
                 callback(bodys);
             } else {
