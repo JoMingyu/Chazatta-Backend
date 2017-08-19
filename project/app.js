@@ -1,11 +1,10 @@
 const express = require('express');
 const app = express();
-const router = require('./Route/router');
 const bodyParser = require('body-parser');
 
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use('/', router);
+app.use('/', require('./Route/account'));
 
-app.listen(3000, () => {
-    console.log('Server is listening on 3000');
+app.listen(8190, () => {
+    console.log('Server is listening on 8190');
 });
