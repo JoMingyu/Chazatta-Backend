@@ -199,29 +199,31 @@ router.route('/idea/comment/list').get((req, res) => {
     let cut = parseInt(req.query.cut);
     let page = parseInt(req.query.page);
     let arr = new Array();
-    mysql.query('SELECT * FROM idea_comment WHERE idea_idx=?', idx, (err, rows) => {
-        let ob = [];
-        console.log(rows.length);
-        for (let i = 0; i < rows.length; i++) {
-            mysql.query('SELECT * FROM account WHERE email=?', rows[i].owner, (err, result) => {
-                ob = {
-                    'resu': rows[i]
-                };
-                ob.resu.name = result[0].name;
-                arr.push(ob);
-                console.log(arr);
+    mysql.query('SELECT like_count FROM idea WHERE idx=?', idx, (err, find) => {
+        let like_count = find[0].like_count;
+        console.log(like_count);
+        mysql.query('SELECT * FROM idea_comment WHERE idea_idx=?', idx, (err, rows) => {
+            let ob = [];
+            console.log(rows.length);
+            for (let i = 0; i < rows.length; i++) {
+                mysql.query('SELECT * FROM account WHERE email=?', rows[i].owner, (err, result) => {
+                    ob = {
+                        'resu': rows[i]
+                    };
+                    ob.resu.name = result[0].name;
+                    arr.push(ob);
+                    console.log(arr);
 
-                if (i + 1 == rows.length) {
-                    res.status(200).send(arr);
-                    res.end();
-                }
+                    if (i + 1 == rows.length) {
+                        let result = { 'result': arr, 'like_count': like_count, 'commentCount': rows.length }
+                        res.status(200).send(result);
+                        res.end();
+                    }
 
-            });
-
-        }
-
-    })
-
+                });
+            }
+        })
+    });
 });
 
 
