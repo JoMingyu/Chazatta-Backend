@@ -97,8 +97,7 @@ router.route('/idea').post((req, res) => {
 }).delete((req, res) => {
     let idx = req.query.idx;
     mysql.query('DELETE FROM idea WHERE idx=?', idx, (err, rows) => {
-        res.status(200);
-        res.end();
+        res.sendStatus(200);
     })
 });
 
@@ -108,7 +107,6 @@ router.route('/idea/detail').get((req, res) => {
     // 게시글 번호를 기준으로 데이터 가져온뒤 팀멤버또한 검색해 제공 
     mysql.query('SELECT * FROM idea WHERE idx=?', idx, (err, rows) => {
         mysql.query('SELECT * FROM idea_team WHERE idea_idx=?', idx, (err, result) => {
-
             res.json({
                 'detail': rows[0],
                 'teamMember': result[0]
@@ -139,27 +137,25 @@ router.route('/idea/like').post((req, res) => {
     // 좋아요 + 기능
     let idx = req.body.idx;
     mysql.query('SELECT * FROM idea WHERE idx=?', idx, (err, rows) => { // 해당되는 게시물의 좋아요 수를 가져오기 위해 
-
         mysql.query('UPDATE idea SET like_count=? WHERE idx=?', [++rows[0].like_count, idx], (err, result) => { // 가져온 좋아요 수에서 증가 후 update
-
-            res.status(200).send({
-                'like_count': rows[0].like_count
-            });
-            res.end();
+            if(!err) {
+                res.sendStatus(200);
+            } else {
+                res.sendStatus(204);
+            }
         });
     });
 
 }).delete((req, res) => {
+    // 좋아요 취소
     let idx = req.body.idx;
     mysql.query('SELECT * FROM idea WHERE idx=?', idx, (err, rows) => {
-
         mysql.query('UPDATE idea SET like_count=? WHERE idx=?', [--rows[0].like_count, idx], (err, result) => {
-
-            res.status(200).send({
-                'like_count': rows[0].like_count
-            });
-            res.end();
-
+            if(!err) {
+                res.sendStatus(200);
+            } else {
+                res.sendStatus(204);
+            }
         });
     });
 });
@@ -243,6 +239,5 @@ router.route('/idea/comment/list').get((req, res) => {
         })
     });
 });
-
 
 module.exports = router;
