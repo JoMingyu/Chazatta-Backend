@@ -45,7 +45,7 @@ router.route('/idea').post((req, res) => {
         ]);
     mysql.query('SELECT idx FROM idea ORDER BY idx DESC', (err, rows) => {
         let newIdx = rows[0].idx;
-        mysql.query('INSERT INTO idea_team VALUES(?, ?, ?)', [newIdx, [], [email]], (err, rows) => {
+        mysql.query('INSERT INTO idea_team VALUES(?, ?, ?)', [newIdx, '[]', `["${email}"]`], (err, rows) => {
             if (!err) {
                 res.sendStatus(201);
             } else {
