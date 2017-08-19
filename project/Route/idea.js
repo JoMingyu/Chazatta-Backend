@@ -80,4 +80,12 @@ router.route('/idea/complete').post((req, res) => {
     // 프로젝트 완료
 });
 
+router.route('/idea/comment').post((req, res) => {
+    // 댓글
+});
+
+router.route('/idea/like').post((req, res) => {
+    // 좋아요
+});
+
 module.exports = router;
