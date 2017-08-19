@@ -25,8 +25,8 @@ DROP TABLE IF EXISTS `account`;
 CREATE TABLE `account` (
   `access_token` varchar(255) NOT NULL,
   `registration_id` varchar(511) NOT NULL,
-  `name` varchar(31) NOT NULL,
   `email` varchar(127) NOT NULL,
+  `name` varchar(31) NOT NULL,
   `sex` varchar(1) NOT NULL,
   `position` varchar(15) NOT NULL,
   `phone` varchar(31) NOT NULL,
@@ -35,8 +35,8 @@ CREATE TABLE `account` (
   `age_private` tinyint(4) NOT NULL,
   `belong` varchar(63) NOT NULL,
   `belong_private` tinyint(4) NOT NULL,
-  `score` double NOT NULL DEFAULT '0',
-  `score_sponsor_count` int(11) NOT NULL DEFAULT '0',
+  `score` double NOT NULL,
+  `score_sponsor_count` int(11) NOT NULL,
   PRIMARY KEY (`access_token`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -78,4 +78,4 @@ CREATE TABLE `idea` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-08-19 17:05:31
+-- Dump completed on 2017-08-19 17:35:28
