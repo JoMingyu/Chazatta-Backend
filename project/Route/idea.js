@@ -108,19 +108,31 @@ router.route('/idea/complete').post((req, res) => {
 
 router.route('/idea/comment').post((req, res) => {
     // 댓글
+    let idx = parseInt(req.body.idx);
+    let email = req.body.email;
+    let content = req.body.content;
+
+    mysql.query('INSERT INTO idea_comment(idea_idx, owner, content) VALUES(?, ?, ?)', [idx, email, content], (err, rows) => {
+        if(!err) {
+            res.sendStatus(201);
+        } else {
+            res.sendStatus(204);
+        }
+    });
 });
 
 router.route('/idea/like').post((req, res) => {
     // 좋아요
 });
 
-router.route('/idea/team').post((req, res) => {
+router.route('/idea/team/applies').post((req, res) => {
     // 팀원 신청
+    let idx = parseInt(req.body.idx);
+}).get((req, res) => {
+    // 지 아이디어에 대한 팀원 신청 목록 조회
 });
 
-router.route('/idea/team/applies').get((req, res) => {
-    // 지 아이디어에 대한 팀원 신청 목록 조회
-}).post((req, res) => {
+router.route('/idea/team/accept').post((req, res) => {
     // 신청 수락
 }).delete((req, res) => {
     // 거절
