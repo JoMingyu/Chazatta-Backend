@@ -61,8 +61,6 @@ router.route('/idea').post((req, res) => {
     // ["", ""]
 
     let filteredIdeas = new Array();
-    let ideaCount = 0;
-
     mysql.query('SELECT * FROM idea ORDER BY like_count DESC', (err, rows) => {
         for (idx in rows) {
             let idea = rows[idx];
@@ -71,7 +69,7 @@ router.route('/idea').post((req, res) => {
             for (let i = 0; i < platformsOfIdea.length; i++) { // 반복문 속도 개선 필요함
                 for (let j = 0; j < platformToFilter.length; j++) {
                     if (platformsOfIdea[i] == platformToFilter[j]) {
-                        filteredIdeas[ideaCount++] = {
+                        filteredIdeas.push({
                             idx: idea.idx,
                             title: idea.title,
                             summary: idea.summary,
@@ -81,17 +79,16 @@ router.route('/idea').post((req, res) => {
                             team_max_count: idea.team_max_count,
                             team_current_count: idea.team_current_count,
                             team_desire: idea.team_desire
-                        };
+                        });
                     }
                 }
             }
         }
 
         let responseData = new Array();
-        let dataCount = 0;
         for (let i = cut * page; i < cut * (page + 1); i++) {
             if (filteredIdeas[i] !== undefined) {
-                responseData[dataCount++] = filteredIdeas[i];
+                responseData.push(filteredIdeas[i]);
             }
         }
 
@@ -107,7 +104,6 @@ router.route('/idea').post((req, res) => {
 
 router.route('/idea/detail').get((req, res) => {
     // 아이디어 세부 정보
-    // 팀원 정보
     let idx = req.query.idx;
     mysql.query('SELECT * FROM idea WHERE idx=?', idx, (err, rows) => {
         mysql.query('SELECT * FROM idea_team WHERE idea_idx=?', idx, (err, result) => {
@@ -116,8 +112,7 @@ router.route('/idea/detail').get((req, res) => {
             for (var i = 0; i < result.length; i++) {
                 teamMember.push(result[i].team);
             }
-            res.status(200).send({ 'detail': detail, 'teamMember': teamMember });
-            res.end();
+            res.json({ 'detail': detail, 'teamMember': teamMember });
         });
     });
 });
@@ -169,6 +164,19 @@ router.route('/idea/like').post((req, res) => {
 router.route('/idea/team/applies').post((req, res) => {
     // 팀원 신청
     let idx = parseInt(req.body.idx);
+    let email = req.body.email;
+
+    mysql.query('SELECT applier FROM idea_team WHERE idea_idx=?', [idx], (err, rows) => {
+        let applier = JSON.parse(rows[0].applier);
+        applier[applier.length] = email;
+        mysql.query('UPDATE idea_team SET applier=? WHERE idea_idx=?', [JSON.stringify(applier), idx], (err, rows) => {
+            if(!err) {
+                res.sendStatus(201);
+            } else {
+                res.sendStatus(204);
+            }
+        });
+    });
 }).get((req, res) => {
     // 지 아이디어에 대한 팀원 신청 목록 조회
 });
