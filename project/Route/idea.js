@@ -86,7 +86,11 @@ router.route('/idea').post((req, res) => {
         res.json(responseData);
     });
 }).delete((req, res) => {
-    // 아이디어 삭제
+    let idx = req.query.idx;
+    mysql.query('DELETE FROM idea WHERE idx=?', idx, (err, rows) => {
+        res.status(200);
+        res.end();
+    })
 });
 
 router.route('/idea/detail').get((req, res) => {
