@@ -136,7 +136,16 @@ router.route('/idea/like').post((req, res) => {
     });
 
 }).delete((req, res) => {
+    let idx = req.body.idx;
+    mysql.query('SELECT * FROM idea WHERE idx=?', idx, (err, rows) => {
 
+        mysql.query('UPDATE idea SET like_count=? WHERE idx=?', [--rows[0].like_count, idx], (err, result) => {
+
+            res.status(200).send({ 'like_count': rows[0].like_count });
+            res.end();
+
+        });
+    });
 });
 
 router.route('/idea/team/applies').post((req, res) => {
