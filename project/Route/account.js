@@ -61,16 +61,17 @@ router.route('/signup').post((req, res) => {
                     sex,
                     position,
                     phone,
-                    phone_private,
+                    phonePrivate,
                     age,
-                    age_private,
+                    agePrivate,
                     belong,
-                    belong_private,
+                    belongPrivate,
                     0, 0
                 ], (err, rows) => {
                     if (!err) {
                         res.sendStatus(201);
                     } else {
+                        console.log(err);
                         res.sendStatus(204);
                     }
                 }
