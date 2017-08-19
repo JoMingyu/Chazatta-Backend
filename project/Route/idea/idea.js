@@ -86,7 +86,7 @@ router.route('/idea').post((req, res) => {
 
                             if (idx == rows.length - 1) {
                                 let responseData = new Array();
-                                for (let i = cut * page; i < cut * (page + 1); i++) { // 지정 page에서 cut의 수만큼 필터링해 제공해주는 기능
+                                for (let k = cut * page; k < cut * (page + 1); k++) { // 지정 page에서 cut의 수만큼 필터링해 제공해주는 기능
                                     if (filteredIdeas[i] !== undefined) {
                                         responseData.push(filteredIdeas[i]);
                                     }
