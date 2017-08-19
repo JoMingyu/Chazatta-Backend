@@ -45,8 +45,8 @@ router.route('/score').post((req, res) => {
 
 router.route('/mypage').post((req, res) => {
     let client = req.body.email;
-    console.log(client); //name, position, phone, age, belong, phone_private, age_private, belong_private
-    mysql.query('SELECT * FROM account WHERE email=?', client, (err, rows) => {
+    console.log(client);
+    mysql.query('SELECT name, position, phone, age, belong, phone_private, age_private, belong_private FROM account WHERE email=?', client, (err, rows) => {
         console.log(rows);
         res.status(200).send(rows[0]);
         res.end();
