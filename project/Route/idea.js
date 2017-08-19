@@ -1,10 +1,14 @@
 const router = require('express').Router();
 const mysql = require('../Database/mysql');
 const fcm = require('../Support/fcm');
-const util = require('util');
 
 setInterval(() => {
+    // 매일 개발 종료일이 되는 아이디어를 탐색
+    // 프로젝트 완료시키세염 하는 푸쉬
+
     const date = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '').split(" ")[0];
+    // date만 자르기
+
     mysql.query('SELECT owner, title FROM idea WHERE develop_end_date=?', [date], (err, rows) => {
         for (idx in rows) {
             let row = rows[idx];
@@ -19,16 +23,20 @@ setInterval(() => {
 
 router.route('/idea').post((req, res) => {
     // 아이디어 추가
+
     let email = req.body.email;
     let title = req.body.title;
     let summary = req.body.summary;
     let platform = req.body.platform;
+    // JSONArray
+
     let purpose = req.body.purpose;
     let detail = req.body.detail;
     let startDate = req.body.start_date;
     let endDate = req.body.end_date;
     let teamMaxCount = req.body.team_max_count;
     let teamDesire = req.body.team_desire;
+    // JSONArray
 
     mysql.query('INSERT INTO idea(owner, title, summary, platform, purpose, detail, develop_start_date, develop_end_date, team_max_count, team_desire) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [
         email,
@@ -41,15 +49,19 @@ router.route('/idea').post((req, res) => {
         endDate,
         teamMaxCount,
         teamDesire
-    ]);
-    mysql.query('SELECT idx FROM idea ORDER BY idx DESC', (err, rows) => {
-        let newIdx = rows[0].idx;
-        mysql.query('INSERT INTO idea_team VALUES(?, ?, ?)', [newIdx, '[]', `["${email}"]`], (err, rows) => {
-            if (!err) {
-                res.sendStatus(201);
-            } else {
-                res.sendStatus(204);
-            }
+    ], (err, rows) => {
+        // 아이디어 등록 직후
+        mysql.query('SELECT idx FROM idea ORDER BY idx DESC', (err, rows) => {
+            // 맨 마지막 index를 가져오자
+            let newIdx = rows[0].idx;
+            mysql.query('INSERT INTO idea_team VALUES(?, ?, ?)', [newIdx, '[]', `["${email}"]`], (err, rows) => {
+                // 팀 테이블 초기화
+                if (!err) {
+                    res.sendStatus(201);
+                } else {
+                    res.sendStatus(204);
+                }
+            });
         });
     });
 }).get((req, res) => {
@@ -94,10 +106,14 @@ router.route('/idea').post((req, res) => {
         res.json(responseData);
     });
 }).delete((req, res) => {
+    // 아이디어 삭제
     let idx = req.query.idx;
     mysql.query('DELETE FROM idea WHERE idx=?', idx, (err, rows) => {
-        res.status(200);
-        res.end();
+        if(!err) {
+            res.sendStatus(200);
+        } else {
+            res.sendStatus(204);
+        }
     })
 });
 
@@ -135,11 +151,14 @@ router.route('/idea/like').post((req, res) => {
     // 좋아요
     let idx = req.body.idx;
     mysql.query('SELECT * FROM idea WHERE idx=?', idx, (err, rows) => {
-
+        // idx를 통해 데이터를 가져오자
         mysql.query('UPDATE idea SET like_count=? WHERE idx=?', [++rows[0].like_count, idx], (err, result) => {
-
-            res.status(200).send({ 'like_count': rows[0].like_count });
-            res.end();
+            // 증가된 값을 다시 삽입하자
+            if(!err) {
+                res.sendStatus(200);
+            } else {
+                res.sendStatus(204);
+            }
         });
     });
 
