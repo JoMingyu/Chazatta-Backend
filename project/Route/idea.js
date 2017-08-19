@@ -186,6 +186,26 @@ router.route('/idea/team/applies').post((req, res) => {
 
 router.route('/idea/team/accept').post((req, res) => {
     // 신청 수락
+    let idx = parseInt(req.body.idx);
+    let email = req.body.email;
+
+    mysql.query('SELECT applier, team FROM idea_team WHERE idea_idx=?', [idx], (err, rows) => {
+        let appliers = JSON.parse(rows[0].applier);
+        let team = JSON.parse(rows[0].team);
+        for(let i = 0; i < appliers.length; i++) {
+            if(appliers[i] == email) {
+                team.push(email);
+                appliers[i] = undefined;
+                mysql.query('UPDATE idea_team SET team=?, applier=? WHERE idea_idx=?', [team, appliers, idx], (err, rows) => {
+                    if(!err) {
+                        res.sendStatus(200);
+                    } else {
+                        res.sendStatus(204);
+                    }
+                });
+            }
+        }
+    });
 }).delete((req, res) => {
     // 거절
 });
@@ -197,10 +217,8 @@ router.route('/idea/comment/list').get((req, res) => {
     let arr = new Array();
     mysql.query('SELECT like_count FROM idea WHERE idx=?', idx, (err, find) => {
         let like_count = find[0].like_count;
-        console.log(like_count);
         mysql.query('SELECT * FROM idea_comment WHERE idea_idx=?', idx, (err, rows) => {
             let ob = [];
-            console.log(rows.length);
             for (let i = 0; i < rows.length; i++) {
                 mysql.query('SELECT * FROM account WHERE email=?', rows[i].owner, (err, result) => {
                     ob = {
@@ -208,14 +226,11 @@ router.route('/idea/comment/list').get((req, res) => {
                     };
                     ob.resu.name = result[0].name;
                     arr.push(ob);
-                    console.log(arr);
 
                     if (i + 1 == rows.length) {
                         let result = { 'result': arr, 'like_count': like_count, 'commentCount': rows.length }
-                        res.status(200).send(result);
-                        res.end();
+                        res.send(result);
                     }
-
                 });
             }
         })
