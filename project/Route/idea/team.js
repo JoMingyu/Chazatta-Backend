@@ -72,6 +72,24 @@ router.route('/idea/team/accept').post((req, res) => {
     });
 }).delete((req, res) => {
     // 거절
+    let idx = parseInt(req.body.idx);
+    let email = req.body.email;
+
+    mysql.query('SELECT applier FROM idea_team WHERE idea_idx=?', [idx], (err, rows) => {
+        let appliers = JSON.parse(rows[0].applier);
+        for(let i = 0; i < appliers.length; i++) {
+            if(appliers[i] == email) {
+                appliers.splice(i, 1);
+                mysql.query('UPDATE idea_team SET applier=? WHERE idea_idx=?', [JSON.stringify(appliers), idx], (err, rows) => {
+                    if(err) {
+                        res.sendStatus(204);
+                        return;
+                    }
+                });
+            }
+        }
+        res.sendStatus(200);
+    });
 });
 
 module.exports = router;
