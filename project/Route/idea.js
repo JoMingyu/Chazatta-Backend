@@ -92,7 +92,7 @@ router.route('/idea').post((req, res) => {
             }
         }
 
-        res.json(responseData);
+        res.json({ideas: responseData});
     });
 }).delete((req, res) => {
     let idx = req.query.idx;
@@ -171,6 +171,13 @@ router.route('/idea/team/applies').post((req, res) => {
 
     mysql.query('SELECT applier FROM idea_team WHERE idea_idx=?', [idx], (err, rows) => {
         let applier = JSON.parse(rows[0].applier);
+        for(let i = 0; i < applier.length; i++) {
+            if(applier[i] == email) {
+                // 중복 체크
+                res.sendStatus(204);
+                return;
+            }
+        }
         applier[applier.length] = email;
         mysql.query('UPDATE idea_team SET applier=? WHERE idea_idx=?', [JSON.stringify(applier), idx], (err, rows) => {
             if (!err) {
@@ -195,8 +202,8 @@ router.route('/idea/team/accept').post((req, res) => {
         for(let i = 0; i < appliers.length; i++) {
             if(appliers[i] == email) {
                 team.push(email);
-                appliers[i] = undefined;
-                mysql.query('UPDATE idea_team SET team=?, applier=? WHERE idea_idx=?', [team, appliers, idx], (err, rows) => {
+                appliers.splice(i, 1);
+                mysql.query('UPDATE idea_team SET team=?, applier=? WHERE idea_idx=?', [JSON.stringify(team), JSON.stringify(appliers), idx], (err, rows) => {
                     if(!err) {
                         res.sendStatus(200);
                     } else {
