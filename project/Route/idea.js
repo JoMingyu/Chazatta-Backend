@@ -96,7 +96,7 @@ router.route('/idea/detail').get((req, res) => {
         console.log(rows);
         res.status(200).send(JSON.stringify(rows));
         res.end();
-    })
+    });
 });
 
 router.route('/idea/complete').post((req, res) => {
