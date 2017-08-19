@@ -69,7 +69,7 @@ router.route('/signup').post((req, res) => {
                     0, 0
                 ], (err, rows) => {
                     if (!err) {
-                        res.sendStatus(201);
+                        res.status(201).send({email: email});
                     } else {
                         console.log(err);
                         res.sendStatus(204);
@@ -101,7 +101,7 @@ router.route('/signup').post((req, res) => {
                 0, 0
             ], (err, rows) => {
                 if (!err) {
-                    res.sendStatus(201);
+                    res.status(201).send({email: email});
                 } else {
                     res.sendStatus(204);
                 }
