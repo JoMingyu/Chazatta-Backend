@@ -8,7 +8,7 @@ setInterval(() => {
     mysql.query('SELECT owner, title FROM idea WHERE develop_end_date=?', [date], (err, rows) => {
         for (idx in rows) {
             let row = rows[idx];
-            mysql.query('SELECT registration_id FROM account WHERE access_token=?', [row.owner], (err, accountRows) => {
+            mysql.query('SELECT registration_id FROM account WHERE email=?', [row.owner], (err, accountRows) => {
                 let ideaTitle = row.title;
                 let registrationId = accountRows[0].registration_id;
                 fcm.fcm(registrationId, `'${ideaTitle}' 아이디어의 개발 종료일`, '프로젝트를 완료하고 팀원을 평가해주세요!');
@@ -19,7 +19,7 @@ setInterval(() => {
 
 router.route('/idea').post((req, res) => {
     // 아이디어 추가
-    let client = req.body.access_token;
+    let email = req.body.email;
     let title = req.body.title;
     let summary = req.body.summary;
     let platform = req.body.platform;
@@ -31,7 +31,7 @@ router.route('/idea').post((req, res) => {
     let teamDesire = req.body.team_desire;
 
     mysql.query('INSERT INTO idea(owner, title, summary, platform, purpose, detail, develop_start_date, develop_end_date, team_max_count, team_desire', [
-        client,
+        email,
         title,
         summary,
         platform,

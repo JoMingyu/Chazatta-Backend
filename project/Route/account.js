@@ -15,9 +15,9 @@ router.route('/signup').post((req, res) => {
 
     parser.profile(accessToken, response => {
         mysql.query('INSERT INTO account VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            [accessToken,
+            [response.email,
+            accessToken,
             registrationId,
-            response.email,
             response.name,
             response.sex,
             position,
