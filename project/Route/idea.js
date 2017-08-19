@@ -30,7 +30,7 @@ router.route('/idea').post((req, res) => {
     let teamMaxCount = req.body.team_max_count;
     let teamDesire = req.body.team_desire;
 
-    mysql.query('INSERT INTO idea(owner, title, summary, platform, purpose, detail, develop_start_date, develop_end_date, team_max_count, team_desire',
+    mysql.query('INSERT INTO idea(owner, title, summary, platform, purpose, detail, develop_start_date, develop_end_date, team_max_count, team_desire) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
         [
             email,
             title,
