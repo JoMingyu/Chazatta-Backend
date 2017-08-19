@@ -45,6 +45,8 @@ router.route('/idea').post((req, res) => {
 }).get((req, res) => {
     // 아이디어 리스트 가져오기. (1) 플랫폼 필터링 (2) 좋아요순 정렬
     let platformToFilter = JSON.parse(req.query.platform);
+    let cut = parseInt(JSON.parse(req.query.cut));
+    let page = parseInt(JSON.parse(req.query.page));
     // ["", ""]
 
     let filteredIdeas = new Array();
@@ -55,7 +57,7 @@ router.route('/idea').post((req, res) => {
             let idea = rows[idx];
 
             let platformsOfIdea = JSON.parse(idea.platform);
-            for (let i = 0; i < platformsOfIdea.length; i++) {
+            for (let i = 0; i < platformsOfIdea.length; i++) { // 반복문 속도 개선 필요함
                 for (let j = 0; j < platformToFilter.length; j++) {
                     if (platformsOfIdea[i] == platformToFilter[j]) {
                         filteredIdeas[ideaCount++] = {
@@ -66,7 +68,15 @@ router.route('/idea').post((req, res) => {
             }
         }
 
-        res.json(filteredIdeas);
+        let responseData = new Array();
+        let dataCount = 0;
+        for (let i = cut * page; i < cut * (page + 1); i++) {
+            if (filteredIdeas[i] !== undefined) {
+                responseData[dataCount++] = filteredIdeas[i];
+            }
+        }
+
+        res.json(responseData);
     });
 }).delete((req, res) => {
     // 아이디어 삭제
