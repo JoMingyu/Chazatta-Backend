@@ -126,11 +126,7 @@ router.route('/idea/comment').post((req, res) => {
     let idx = parseInt(req.body.idx);
     let email = req.body.email;
     let content = req.body.content;
-    let date = new Date();
-    let year = date.getFullYear();
-    let month = date.getMonth() + 1;
-    let day = date.getDate();
-    mysql.query('INSERT INTO idea_comment(idea_idx, owner, content, year, month, day) VALUES(?, ?, ?, ?, ?, ?)', [idx, email, content, year, month, day], (err, rows) => {
+    mysql.query('INSERT INTO idea_comment(idea_idx, owner, content, date) VALUES(?, ?, ?, NOW())', [idx, email, content], (err, rows) => {
         if (!err) {
             res.sendStatus(201);
         } else {
