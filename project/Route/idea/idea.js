@@ -30,7 +30,7 @@ router.route('/idea').post((req, res) => {
     let teamMaxCount = req.body.team_max_count;
     let teamDesire = req.body.team_desire_tags;
 
-    mysql.query('INSERT INTO idea(owner, title, summary, platform, purpose, detail, develop_start_date, develop_end_date, team_max_count, team_desire_tags) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [
+    mysql.query('INSERT INTO idea(owner, title, summary, date, platform, purpose, detail, develop_start_date, develop_end_date, team_max_count, team_desire_tags) VALUES(?, ?, ?, CURDATE(), ?, ?, ?, ?, ?, ?, ?)', [
         email,
         title,
         summary,
@@ -68,30 +68,39 @@ router.route('/idea').post((req, res) => {
             for (let i = 0; i < platformsOfIdea.length; i++) {
                 for (let j = 0; j < platformToFilter.length; j++) {
                     if (platformsOfIdea[i] == platformToFilter[j]) { // 일치하는 플랫폼이 존재한다면 배열에 추가
-                        filteredIdeas.push({
-                            idx: idea.idx,
-                            title: idea.title,
-                            summary: idea.summary,
-                            platform: idea.platform,
-                            start_date: idea.develop_start_date,
-                            end_date: idea.develop_end_date,
-                            team_max_count: idea.team_max_count,
-                            team_current_count: idea.team_current_count,
-                            team_desire_tags: idea.team_desire_tags
+                        mysql.query('SELECT * FROM account WHERE email=?', [idea.owner], (err, accountRows) => {
+                            filteredIdeas.push({
+                                idx: idea.idx,
+                                name: accountRows.name,
+                                title: idea.title,
+                                summary: idea.summary,
+                                date: idea.date,
+                                platform: idea.platform,
+                                start_date: idea.develop_start_date,
+                                end_date: idea.develop_end_date,
+                                team_max_count: idea.team_max_count,
+                                team_current_count: idea.team_current_count,
+                                team_desire_tags: idea.team_desire_tags,
+                                like_count: idea.like_count
+                            });
+
+                            if (idx == rows.length - 1) {
+                                let responseData = new Array();
+                                for (let i = cut * page; i < cut * (page + 1); i++) { // 지정 page에서 cut의 수만큼 필터링해 제공해주는 기능
+                                    if (filteredIdeas[i] !== undefined) {
+                                        responseData.push(filteredIdeas[i]);
+                                    }
+                                }
+
+                                if (!res.headersSent) {
+                                    res.json({ ideas: responseData });
+                                }
+                            }
                         });
                     }
                 }
             }
         }
-
-        let responseData = new Array();
-        for (let i = cut * page; i < cut * (page + 1); i++) { // 지정 page에서 cut의 수만큼 필터링해 제공해주는 기능
-            if (filteredIdeas[i] !== undefined) {
-                responseData.push(filteredIdeas[i]);
-            }
-        }
-
-        res.json({ideas: responseData});
     });
 }).delete((req, res) => {
     let idx = req.query.idx;
@@ -108,7 +117,7 @@ router.route('/idea/detail').get((req, res) => {
         mysql.query('SELECT * FROM idea_team WHERE idea_idx=?', idx, (err, result) => {
             res.json({
                 'detail': rows[0],
-                'teamMember': result[0]
+                'team_member': result[0]
             });
         });
     });

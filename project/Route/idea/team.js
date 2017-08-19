@@ -70,6 +70,7 @@ router.route('/idea/team/accept').post((req, res) => {
             }
         }
     });
+    // 카운트 늘어나야 함
 }).delete((req, res) => {
     // 거절
     let idx = parseInt(req.body.idx);
