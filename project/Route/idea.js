@@ -115,7 +115,7 @@ router.route('/idea/comment').post((req, res) => {
     let content = req.body.content;
 
     mysql.query('INSERT INTO idea_comment(idea_idx, owner, content) VALUES(?, ?, ?)', [idx, email, content], (err, rows) => {
-        if(!err) {
+        if (!err) {
             res.sendStatus(201);
         } else {
             res.sendStatus(204);
@@ -130,7 +130,7 @@ router.route('/idea/like').post((req, res) => {
 
         mysql.query('UPDATE idea SET like_count=? WHERE idx=?', [++rows[0].like_count, idx], (err, result) => {
 
-            res.status(200).send(JSON.stringify(rows[0].like_count));
+            res.status(200).send({ 'like_count': rows[0].like_count });
             res.end();
         });
     });
