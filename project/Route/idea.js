@@ -30,19 +30,18 @@ router.route('/idea').post((req, res) => {
     let teamMaxCount = req.body.team_max_count;
     let teamDesire = req.body.team_desire;
 
-    mysql.query('INSERT INTO idea(owner, title, summary, platform, purpose, detail, develop_start_date, develop_end_date, team_max_count, team_desire) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-        [
-            email,
-            title,
-            summary,
-            platform,
-            purpose,
-            detail,
-            startDate,
-            endDate,
-            teamMaxCount,
-            teamDesire
-        ]);
+    mysql.query('INSERT INTO idea(owner, title, summary, platform, purpose, detail, develop_start_date, develop_end_date, team_max_count, team_desire) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [
+        email,
+        title,
+        summary,
+        platform,
+        purpose,
+        detail,
+        startDate,
+        endDate,
+        teamMaxCount,
+        teamDesire
+    ]);
     mysql.query('SELECT idx FROM idea ORDER BY idx DESC', (err, rows) => {
         let newIdx = rows[0].idx;
         mysql.query('INSERT INTO idea_team VALUES(?, ?, ?)', [newIdx, '[]', `["${email}"]`], (err, rows) => {
@@ -107,12 +106,8 @@ router.route('/idea/detail').get((req, res) => {
     let idx = req.query.idx;
     mysql.query('SELECT * FROM idea WHERE idx=?', idx, (err, rows) => {
         mysql.query('SELECT * FROM idea_team WHERE idea_idx=?', idx, (err, result) => {
-            let detail = JSON.stringify(rows);
-            let teamMember = new Array();
-            for (var i = 0; i < result.length; i++) {
-                teamMember.push(result[i].team);
-            }
-            res.json({ 'detail': detail, 'teamMember': teamMember });
+
+            res.json({ 'detail': rows[0], 'teamMember': result[0] });
         });
     });
 });
@@ -170,7 +165,7 @@ router.route('/idea/team/applies').post((req, res) => {
         let applier = JSON.parse(rows[0].applier);
         applier[applier.length] = email;
         mysql.query('UPDATE idea_team SET applier=? WHERE idea_idx=?', [JSON.stringify(applier), idx], (err, rows) => {
-            if(!err) {
+            if (!err) {
                 res.sendStatus(201);
             } else {
                 res.sendStatus(204);
