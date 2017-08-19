@@ -22,4 +22,5 @@ router.route('/signup').post((req, res) => {
     res.send('hello');
 });
 
+
 module.exports = router;
