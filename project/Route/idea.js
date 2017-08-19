@@ -35,10 +35,10 @@ router.route('/idea').post((req, res) => {
     let startDate = req.body.start_date;
     let endDate = req.body.end_date;
     let teamMaxCount = req.body.team_max_count;
-    let teamDesire = req.body.team_desire;
+    let teamDesireTags = req.body.team_desire_tags;
     // JSONArray
 
-    mysql.query('INSERT INTO idea(owner, title, summary, platform, purpose, detail, develop_start_date, develop_end_date, team_max_count, team_desire) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [
+    mysql.query('INSERT INTO idea(owner, title, summary, platform, purpose, detail, develop_start_date, develop_end_date, team_max_count, team_desire_tags) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [
         email,
         title,
         summary,
@@ -48,7 +48,7 @@ router.route('/idea').post((req, res) => {
         startDate,
         endDate,
         teamMaxCount,
-        teamDesire
+        teamDesireTags
     ], (err, rows) => {
         // 아이디어 등록 직후
         mysql.query('SELECT idx FROM idea ORDER BY idx DESC', (err, rows) => {
@@ -89,7 +89,7 @@ router.route('/idea').post((req, res) => {
                             end_date: idea.develop_end_date,
                             team_max_count: idea.team_max_count,
                             team_current_count: idea.team_current_count,
-                            team_desire: idea.team_desire
+                            team_desire_tags: idea.team_desire_tags
                         });
                     }
                 }
