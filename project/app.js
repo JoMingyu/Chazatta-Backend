@@ -5,5 +5,5 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended: true}));
 
 app.listen(3000, () => {
-    console.log('Port On');
+    console.log('Server is listening on 3000');
 });
