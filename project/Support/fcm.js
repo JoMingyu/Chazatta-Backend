@@ -1,10 +1,10 @@
 const FCM = require('fcm-node');
+const serverKey = 'AIzaSyCmueK3qHNHuVrsjCDscSc9Rbjm2lyRR4s';
 
 module.exports = {
-    fcm: (serverkey, regesiterId, title, body) => {
+    fcm: (regesiterId, title, body) => {
 
-        let fcm = new FCM(serverkey);
-
+        let fcm = new FCM(serverKey);
         let message = {
             to: regesiterId,
             notification: {
@@ -13,7 +13,7 @@ module.exports = {
             }
         };
 
-        fcm.send(message, (err, response) => {
+        fcm.send(message, (err) => {
             if (err) {
                 console.log(err);
             }
