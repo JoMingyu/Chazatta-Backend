@@ -6,7 +6,7 @@ const util = require('util');
 setInterval(() => {
     const date = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '').split(" ")[0];
     mysql.query('SELECT owner, title FROM idea WHERE develop_end_date=?', [date], (err, rows) => {
-        for(idx in rows) {
+        for (idx in rows) {
             let row = rows[idx];
             mysql.query('SELECT registration_id FROM account WHERE access_token=?', [row.owner], (err, accountRows) => {
                 let ideaTitle = row.title;
@@ -30,22 +30,43 @@ router.route('/idea').post((req, res) => {
     let teamMaxCount = req.body.team_max_count;
     let teamDesire = req.body.team_desire;
 
-    mysql.query('INSERT INTO idea(owner, title, summary, platform, purpose, detail, develop_start_date, develop_end_date, team_max_count, team_desire',
-        [
-            client,
-            title,
-            summary,
-            platform,
-            purpose,
-            detail,
-            startDate,
-            endDate,
-            teamMaxCount,
-            teamDesire
-        ]
-    );
+    mysql.query('INSERT INTO idea(owner, title, summary, platform, purpose, detail, develop_start_date, develop_end_date, team_max_count, team_desire', [
+        client,
+        title,
+        summary,
+        platform,
+        purpose,
+        detail,
+        startDate,
+        endDate,
+        teamMaxCount,
+        teamDesire
+    ]);
 }).get((req, res) => {
-    // 아이디어 리스트 가져오기
+    // 아이디어 리스트 가져오기, 플랫폼, 좋아요순 정렬
+    let platform = JSON.parse(req.query.platform);
+    // ['', '']
+
+    let filteredIdeas = new Array();
+    let ideaCount = 0;
+
+    mysql.query('SELECT * FROM idea', (err, rows) => {
+        for (idx in rows) {
+            let idea = rows[idx];
+            let platforms = JSON.parse(idea.platform);
+            for (let i = 0; i < platforms.length; i++) {
+                for (let j = 0; j < platform.length; j++) {
+                    if (platforms[i] == platform[j]) {
+                        filteredIdeas[ideaCount++] = {
+                            title: idea.title
+                        };
+                    }
+                }
+            }
+        }
+
+        res.json(filteredIdeas);
+    });
 }).delete((req, res) => {
     // 아이디어 삭제
 });
