@@ -99,8 +99,11 @@ router.route('/idea/detail').get((req, res) => {
     // 팀원 정보
     let idx = req.query.idx;
     mysql.query('SELECT * FROM idea WHERE idx=?', idx, (err, rows) => {
-        res.status(200).send(JSON.stringify(rows));
-        res.end();
+        mysql.query('SELECT * FROM idea_team WHERE idea_idx=?', idx, (err, result) => {
+
+            res.status(200).send({ 'detail': rows, 'teamMember': result[0].team });
+            res.end();
+        });
     });
 });
 
