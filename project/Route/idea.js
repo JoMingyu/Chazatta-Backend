@@ -45,8 +45,8 @@ router.route('/idea').post((req, res) => {
 }).get((req, res) => {
     // 아이디어 리스트 가져오기. (1) 플랫폼 필터링 (2) 좋아요순 정렬
     let platformToFilter = JSON.parse(req.query.platform);
-    let cut = parseInt(JSON.parse(req.query.cut));
-    let page = parseInt(JSON.parse(req.query.page));
+    let cut = parseInt(req.query.cut);
+    let page = parseInt(req.query.page);
     // ["", ""]
 
     let filteredIdeas = new Array();
