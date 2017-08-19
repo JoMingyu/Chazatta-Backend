@@ -30,18 +30,29 @@ router.route('/idea').post((req, res) => {
     let teamMaxCount = req.body.team_max_count;
     let teamDesire = req.body.team_desire;
 
-    mysql.query('INSERT INTO idea(owner, title, summary, platform, purpose, detail, develop_start_date, develop_end_date, team_max_count, team_desire', [
-        email,
-        title,
-        summary,
-        platform,
-        purpose,
-        detail,
-        startDate,
-        endDate,
-        teamMaxCount,
-        teamDesire
-    ]);
+    mysql.query('INSERT INTO idea(owner, title, summary, platform, purpose, detail, develop_start_date, develop_end_date, team_max_count, team_desire',
+        [
+            email,
+            title,
+            summary,
+            platform,
+            purpose,
+            detail,
+            startDate,
+            endDate,
+            teamMaxCount,
+            teamDesire
+        ]);
+    mysql.query('SELECT idx FROM idea ORDER BY idx DESC', (err, rows) => {
+        let newIdx = rows[0].idx;
+        mysql.query('INSERT INTO idea_team VALUES(?, ?, ?)', [newIdx, [], [email]], (err, rows) => {
+            if (!err) {
+                res.sendStatus(201);
+            } else {
+                res.sendStatus(204);
+            }
+        });
+    });
 }).get((req, res) => {
     // 아이디어 리스트 가져오기. (1) 플랫폼 필터링 (2) 좋아요순 정렬
     let platformToFilter = JSON.parse(req.query.platform);
