@@ -111,8 +111,12 @@ router.route('/idea/detail').get((req, res) => {
     let idx = req.query.idx;
     mysql.query('SELECT * FROM idea WHERE idx=?', idx, (err, rows) => {
         mysql.query('SELECT * FROM idea_team WHERE idea_idx=?', idx, (err, result) => {
-
-            res.status(200).send({ 'detail': rows, 'teamMember': result[0].team });
+            let detail = JSON.stringify(rows);
+            let teamMember = new Array();
+            for (var i = 0; i < result.length; i++) {
+                teamMember.push(result[i].team);
+            }
+            res.status(200).send({ 'detail': detail, 'teamMember': teamMember });
             res.end();
         });
     });
