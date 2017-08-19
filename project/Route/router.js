@@ -26,6 +26,7 @@ function profile(token, callback) {
 
             if (response != null) {
                 console.log('error = ' + response.statusCode);
+                callback(response.statusCode);
             }
 
         }
