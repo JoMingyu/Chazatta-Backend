@@ -12,10 +12,10 @@ router.route('/user').post((req, res) => {
             position: user.position,
             score: user.score
         };
-        if(!user.age_private) {
+        if (!user.age_private) {
             response.age = user.age;
         }
-        if(!user.belong_private) {
+        if (!user.belong_private) {
             response.belong = user.belong;
         }
 
@@ -34,7 +34,7 @@ router.route('/score').post((req, res) => {
         let newScore = (curScore * curSponsor + score) / (curSponsor + 1);
 
         mysql.query('UPDATE account SET score=?, score_sponsor_count=? WHERE email=?', [newScore, curSponsor + 1, target], (err, rows) => {
-            if(!err) {
+            if (!err) {
                 res.sendStatus(200);
             } else {
                 res.sendStatus(204);
@@ -44,7 +44,15 @@ router.route('/score').post((req, res) => {
 });
 
 router.route('/mypage').post((req, res) => {
-    let client = req.body.access_token;
+    let client = req.body.email;
+    console.log(client); //name, position, phone, age, belong, phone_private, age_private, belong_private
+    mysql.query('SELECT * FROM account WHERE email=?', client, (err, rows) => {
+        console.log(rows);
+        res.status(200).send(rows[0]);
+        res.end();
+    });
+
+
 });
 
 module.exports = router;
