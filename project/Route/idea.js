@@ -84,6 +84,12 @@ router.route('/idea').post((req, res) => {
 
 router.route('/idea/detail').get((req, res) => {
     // 아이디어 세부 정보
+    let idx = req.query.idx;
+    mysql.query('SELECT * FROM idea WHERE idx=?', idx, (err, rows) => {
+        console.log(rows);
+        res.status(200).send(JSON.stringify(rows));
+        res.end();
+    })
 });
 
 router.route('/idea/complete').post((req, res) => {
