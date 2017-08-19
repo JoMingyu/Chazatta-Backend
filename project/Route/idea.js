@@ -105,4 +105,16 @@ router.route('/idea/like').post((req, res) => {
     // 좋아요
 });
 
+router.route('/idea/team').post((req, res) => {
+    // 팀원 신청
+});
+
+router.route('/idea/team/applies').get((req, res) => {
+    // 지 아이디어에 대한 팀원 신청 목록 조회
+}).post((req, res) => {
+    // 신청 수락
+}).delete((req, res) => {
+    // 거절
+});;
+
 module.exports = router;
