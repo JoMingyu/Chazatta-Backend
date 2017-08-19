@@ -43,20 +43,21 @@ router.route('/idea').post((req, res) => {
         teamDesire
     ]);
 }).get((req, res) => {
-    // 아이디어 리스트 가져오기, 플랫폼, 좋아요순 정렬
-    let platform = JSON.parse(req.query.platform);
-    // ['', '']
+    // 아이디어 리스트 가져오기. (1) 플랫폼 필터링 (2) 좋아요순 정렬
+    let platformToFilter = JSON.parse(req.query.platform);
+    // ["", ""]
 
     let filteredIdeas = new Array();
     let ideaCount = 0;
 
-    mysql.query('SELECT * FROM idea', (err, rows) => {
+    mysql.query('SELECT * FROM idea ORDER BY like_count DESC', (err, rows) => {
         for (idx in rows) {
             let idea = rows[idx];
-            let platforms = JSON.parse(idea.platform);
-            for (let i = 0; i < platforms.length; i++) {
-                for (let j = 0; j < platform.length; j++) {
-                    if (platforms[i] == platform[j]) {
+
+            let platformsOfIdea = JSON.parse(idea.platform);
+            for (let i = 0; i < platformsOfIdea.length; i++) {
+                for (let j = 0; j < platformToFilter.length; j++) {
+                    if (platformsOfIdea[i] == platformToFilter[j]) {
                         filteredIdeas[ideaCount++] = {
                             title: idea.title
                         };
