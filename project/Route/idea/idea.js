@@ -61,6 +61,10 @@ router.route('/idea').post((req, res) => {
 
     let filteredIdeas = new Array();
     mysql.query('SELECT * FROM idea ORDER BY like_count DESC', (err, rows) => {
+        if(rows.length == 0) {
+            res.sendStatus(204);
+            return;
+        }
         for (idx in rows) {
             let idea = rows[idx];
 
@@ -83,8 +87,7 @@ router.route('/idea').post((req, res) => {
                                 team_desire_tags: idea.team_desire_tags,
                                 like_count: idea.like_count
                             });
-
-                            if (idx == rows.length - 1) {
+                            if (asdfadsf == rows.length - 1) {
                                 let responseData = new Array();
                                 for (let k = cut * page; k < cut * (page + 1); k++) { // 지정 page에서 cut의 수만큼 필터링해 제공해주는 기능
                                     if (filteredIdeas[i] !== undefined) {
@@ -92,17 +95,12 @@ router.route('/idea').post((req, res) => {
                                     }
                                 }
 
-                                if (!res.headersSent) {
-                                    res.json({ ideas: responseData });
-                                }
+                                res.json({ ideas: responseData });
                             }
                         });
                     }
                 }
             }
-        }
-        if(!res.headersSent) {
-            res.sendStatus(204);
         }
     });
 }).delete((req, res) => {
