@@ -96,7 +96,7 @@ router.route('/idea').post((req, res) => {
             response.push(filteredIdeas[i]);
         }
 
-        res.json(response);
+        res.json({ideas: response});
     });
 }).delete((req, res) => {
     let idx = req.query.idx;

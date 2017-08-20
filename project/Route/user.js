@@ -51,8 +51,6 @@ router.route('/mypage').post((req, res) => {
         res.status(200).send(rows[0]);
         res.end();
     });
-
-
 });
 
 module.exports = router;
