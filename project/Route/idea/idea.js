@@ -60,8 +60,8 @@ router.route('/idea').post((req, res) => {
     // ["", ""] page 입력 양식
 
     let filteredIdeas = new Array();
-    mysql.query('SELECT * FROM idea ORDER BY like_count DESC', (err, rows) => {
-        if(rows.length == 0) {
+    mysql.query('SELECT * FROM idea INNER JOIN account ON idea.owner = account.email ORDER BY like_count DESC', (err, rows) => {
+        if (rows.length == 0) {
             res.sendStatus(204);
             return;
         }
@@ -72,36 +72,31 @@ router.route('/idea').post((req, res) => {
             for (let i = 0; i < platformsOfIdea.length; i++) {
                 for (let j = 0; j < platformToFilter.length; j++) {
                     if (platformsOfIdea[i] == platformToFilter[j]) { // 일치하는 플랫폼이 존재한다면 배열에 추가
-                        mysql.query('SELECT * FROM account WHERE email=?', [idea.owner], (err, accountRows) => {
-                            filteredIdeas.push({
-                                idx: idea.idx,
-                                name: accountRows.name,
-                                title: idea.title,
-                                summary: idea.summary,
-                                date: idea.date,
-                                platform: idea.platform,
-                                start_date: idea.develop_start_date,
-                                end_date: idea.develop_end_date,
-                                team_max_count: idea.team_max_count,
-                                team_current_count: idea.team_current_count,
-                                team_desire_tags: idea.team_desire_tags,
-                                like_count: idea.like_count
-                            });
-                            if (asdfadsf == rows.length - 1) {
-                                let responseData = new Array();
-                                for (let k = cut * page; k < cut * (page + 1); k++) { // 지정 page에서 cut의 수만큼 필터링해 제공해주는 기능
-                                    if (filteredIdeas[i] !== undefined) {
-                                        responseData.push(filteredIdeas[i]);
-                                    }
-                                }
-
-                                res.json({ ideas: responseData });
-                            }
+                        filteredIdeas.push({
+                            idx: idea.idx,
+                            name: idea.name,
+                            title: idea.title,
+                            summary: idea.summary,
+                            date: idea.date,
+                            platform: idea.platform,
+                            start_date: idea.develop_start_date,
+                            end_date: idea.develop_end_date,
+                            team_max_count: idea.team_max_count,
+                            team_current_count: idea.team_current_count,
+                            team_desire_tags: idea.team_desire_tags,
+                            like_count: idea.like_count
                         });
                     }
                 }
             }
         }
+
+        let response = new Array();
+        for(let i = cut * page; i < cut * (page + 1); i++) {
+            response.push(filteredIdeas[i]);
+        }
+
+        res.json(response);
     });
 }).delete((req, res) => {
     let idx = req.query.idx;
